@@ -1,0 +1,180 @@
+
+import random
+import operator
+from decimal import *
+
+firstweight = 0
+car1length = 5
+car2length = 5
+
+class Car:
+    def __init__(self, velocity, distance_from_int):
+        self.velocity = velocity
+        self.distance_from_int = distance_from_int
+
+values = {}
+
+for i in range(10001):
+    x = random.randint(1, 23)  # velocity m/s between 10 and 800 meters
+    y = random.randint(5, 1000)  # distance from the intersection (meters)
+    x1 = random.randint(1, 23)
+    y1 = random.randint(5, 1000)
+    values[i] = [x, y, x1, y1]
+
+
+timedifferences = {
+}
+
+firstweight = 0
+
+
+crashes = 0
+b = 1 # used in equation
+
+cherry = False
+
+checkie = False
+
+
+def getVel(distance1, distance2, velocity1, velocity2):
+
+    global t00
+    global t01
+    global t11
+    global t110
+    global t0
+    global t0_2
+    global t1
+    global t1_2
+    global average_difference
+
+    deltat = 0
+    deltat2 = 0
+
+    if checkie == True:
+        deltat += (car1.velocity - originalvel) / 27
+        deltat2 += (car2.velocity - originalvel) / 27
+
+
+    t0 = int(distance1) / int(velocity1) + 3
+    t0_2 = int(distance2) / int(velocity2) / + 3
+    t1 = int(distance1) / car1.velocity
+    t1 += deltat
+    t1_2 = int(distance2) / car2.velocity
+    t1_2 += deltat2
+
+    difference_time0 = Decimal(t1) - Decimal(t0)
+    difference_time1 = Decimal(t1_2) - Decimal(t0_2)
+    average_difference = (difference_time0 + difference_time1) / 2
+
+    t00 = (car1.distance_from_int - car1length) / car1.velocity
+    t01 = (car1.distance_from_int + car1length) / car1.velocity
+    t11 = (car2.distance_from_int - car2length) / car2.velocity
+    t110 = (car2.distance_from_int + car2length) / car2.velocity
+
+
+while b < 41:
+    if cherry != True:
+        cherry = False
+    for i in range(10001):
+        if cherry == False:
+            eachvalue = values[i]
+            velocity1 = eachvalue[0]
+            distance1 = eachvalue[1]
+            velocity2 = eachvalue[2]
+            distance2 = eachvalue[3]
+
+        if cherry == True:
+            velocity1 = input("Please enter the velocity of Car 1: ")
+            distance1 = input("Please enter the distance car 1 is from the road: ")
+            velocity2 = input("Please enter the velocity of Car 2: ")
+            distance2 = input("Please enter the distance car 2 is from the road: ")
+
+
+        car1 = Car(velocity=int(velocity1), distance_from_int=int(distance1))
+        car2 = Car(velocity=int(velocity2), distance_from_int=int(distance2))
+
+        getVel(distance1, distance2, velocity1, velocity2)
+
+        firstweight += int(average_difference)
+
+        # checks to see if they are in the same parts of the intersection at once
+
+        if t00 <= t11 <= t1 or t11 <= t00 <= t1_2 or t1 <= t110 <= t01 or t1_2 <= t01 <= t110:
+            items = [car1, car2]
+            ast = random.choice(items)
+            originalvel = ast.velocity
+            if isinstance(b, int):
+                checkie = True
+                ast.velocity = (ast.velocity + b)
+            else:
+                ast.velocity = (ast.velocity * b)  # changes with each
+            items.remove(ast)
+            nst = random.choice(items)
+            while ast.velocity > 25:
+                car1.velocity = Decimal(car1.velocity) * Decimal(0.80)
+                car2.velocity = Decimal(car2.velocity) * Decimal(0.80)
+
+
+            getVel(distance1, distance2, velocity1, velocity2)
+
+            # checks to see if they are in the same parts of the intersection at once
+            check = 0
+
+            if t00 <= t11 <= t1:
+                check += 1
+            if t11 <= t00 <= t1_2:
+                check += 1
+            if t1 <= t110 <= t01:
+                check += 1
+            if t1_2 <= t01 <= t110:
+                check += 1
+
+            if check != 0:
+                average_difference -= 300
+                crashes += 1
+
+            if cherry == True:
+                if average_difference < 0 or crashes != 0:
+                    b = str(max(timedifferences.items(), key=operator.itemgetter(1))[0])
+                    b = int(b)
+            firstweight += average_difference
+
+            if cherry == True:
+                print("You saved " + str(firstweight) + " seconds")
+                print("You did not crash and saved time by adding by " + str(b))
+                break
+
+    if cherry == False:
+        print(firstweight)  # how much faster it was
+
+    if cherry == True:
+        if average_difference < 0 or crashes != 0:
+            b += 1000
+
+    if cherry == False:
+
+        timedifferences[b] = firstweight
+        if isinstance(b, int):
+            print('There were ' + str(crashes) + ' crashes caused by adding ' + str(b))
+        else:
+            print('There were ' + str(crashes) + ' crashes caused by multiplying by ' + str(b))
+        if isinstance(b, int):
+            b += 1
+        else:
+            b += Decimal(.1)
+
+        if b == 41:
+            b = b - Decimal(39.9)
+
+        if b < Decimal(1.8) or isinstance(b, int):
+            b = b
+        else:
+            b += 200
+
+        if b > 100:
+            cherry = True
+            b = max(timedifferences.items(), key=operator.itemgetter(1))[0]
+            print("The most successful number to add/multiply to the velocity was " + str(max(timedifferences.items(), key=operator.itemgetter(1))[0]))
+
+
