@@ -14,7 +14,7 @@ class Car:
 values = {}
 
 for i in range(10001):
-    x = random.randint(1, 23)  # velocity m/s between 10 and 800 meters
+    x = random.randint(1, 23)  # velocity m/s between 10 and 25 meters
     y = random.randint(5, 1000)  # distance from the intersection (meters)
     x1 = random.randint(1, 23)
     y1 = random.randint(5, 1000)
